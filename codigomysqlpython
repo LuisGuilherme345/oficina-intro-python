@@ -26,7 +26,8 @@ def create_table():
     cursor.execute(sql)
 
 def insert():
-    vnome = input("Digite o nome do produto a ser adicionado: ")
+    print(show_records())
+    vnome = input("\nDigite o nome do produto a ser adicionado: ")
     vpreco = input("Digite o preço do produto a ser adicionado: ")
     vdata = input("Digite a data de validade do produto a ser adicionado(yyyy-mm-dd): ")
 
@@ -46,19 +47,21 @@ def select_all():
         print("-----------")
         print(f"IDT: {l_reg[0]}")
         print(f"Nome: {l_reg[1]}")
-        print(f"Preço: {l_reg[2]}")
+        print(f"Preço: R${l_reg[2]}")
         print(f"Data de Validade: {l_reg[3]}")
         print("-----------")
 
 def delete():
-    vConsultaNomeDel = input("Digite o nome do produto a ser deletado: ")
+    print(show_records())
+    vConsultaNomeDel = input("\nDigite o nome do produto a ser deletado: ")
     sql = f"delete from tb_produto where nome = '{vConsultaNomeDel}'"
     print(f"{vConsultaNomeDel} Foi deletado com sucesso")
     cursor.execute(sql)
     conexao.commit()
 
 def update():
-    vNomePrAlter = input("Digite o nome do produto a ser alterado: ")
+    print("Lista de produtos:", show_records())
+    vNomePrAlter = input("\nDigite o nome do produto a ser alterado: ")
     vPrecoPrAltes = input("Digite o novo preço do produto:")
 
     sql = f'''update tb_produto
@@ -71,6 +74,7 @@ def update():
 def close_connection():
     cursor.close()
     conexao.close()
+    print("\nConexão Fechada")
 
 def show_records():
     sql = '''select * from tb_produto'''
@@ -99,6 +103,7 @@ if __name__ == "__main__":
         if opc == "c":
             insert()
         elif opc == "r":
+          show_records()
           select_all()
         elif opc == "u":
             update()
@@ -108,6 +113,5 @@ if __name__ == "__main__":
             print("End of Stream...")
             break
         else:
-            Print("Opção inválida, tente novamente.")
-        close_connection()
-        show_records()
+            print("\nOpção inválida, tente novamente.")
+    close_connection()
