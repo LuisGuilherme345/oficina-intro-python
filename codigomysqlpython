@@ -1,0 +1,113 @@
+import mysql.connector
+
+def create_connection():
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='ceub123456',
+    )
+    print("Conexão", con)
+    return con
+
+def create_database():
+    sql_create = '''create database if not exists db_loja_3'''
+    cursor.execute(sql_create)
+    sql_use = "use db_loja_3"
+    cursor.execute(sql_use)
+
+def create_table():
+    sql = '''CREATE TABLE if not exists tb_produto(
+       idt INT NOT NULL AUTO_INCREMENT,
+       nome VARCHAR(80) NOT NULL UNIQUE,
+       preco DECIMAL(9, 2) NOT NULL,
+       dta_vali DATE NULL,
+       PRIMARY KEY (idt)
+       )'''
+    cursor.execute(sql)
+
+def insert():
+    vnome = input("Digite o nome do produto a ser adicionado: ")
+    vpreco = input("Digite o preço do produto a ser adicionado: ")
+    vdata = input("Digite a data de validade do produto a ser adicionado(yyyy-mm-dd): ")
+
+    sql= f''' insert into tb_produto
+                     (nome, preco, dta_vali)
+                     values ('{vnome}', {vpreco}, '{vdata}')'''
+    cursor.execute(sql)
+    conexao.commit()
+
+def select_all():
+    vConsultaNome = input("Digite o nome do produto que quer pesquisar: ")
+
+    sql = f"select * from tb_produto where nome = '{vConsultaNome}'"
+    cursor.execute(sql)
+    l_regs = cursor.fetchall()
+    for l_reg in l_regs:
+        print("-----------")
+        print(f"IDT: {l_reg[0]}")
+        print(f"Nome: {l_reg[1]}")
+        print(f"Preço: {l_reg[2]}")
+        print(f"Data de Validade: {l_reg[3]}")
+        print("-----------")
+
+def delete():
+    vConsultaNomeDel = input("Digite o nome do produto a ser deletado: ")
+    sql = f"delete from tb_produto where nome = '{vConsultaNomeDel}'"
+    print(f"{vConsultaNomeDel} Foi deletado com sucesso")
+    cursor.execute(sql)
+    conexao.commit()
+
+def update():
+    vNomePrAlter = input("Digite o nome do produto a ser alterado: ")
+    vPrecoPrAltes = input("Digite o novo preço do produto:")
+
+    sql = f'''update tb_produto
+             set preco = {vPrecoPrAltes}
+             where nome = '{vNomePrAlter}'
+             '''
+    cursor.execute(sql)
+    conexao.commit()
+
+def close_connection():
+    cursor.close()
+    conexao.close()
+
+def show_records():
+    sql = '''select * from tb_produto'''
+    cursor.execute(sql)
+    l_regs = cursor.fetchall()
+    for l_reg in l_regs:
+        print(f"IDT: {l_reg[0]}")
+        print(f"Nome: {l_reg[1]}")
+        print(f"Preco: R${l_reg[2]}")
+        print(f"Data de Validade: {l_reg[3]}")
+
+if __name__ == "__main__":
+    conexao = create_connection()
+    cursor = conexao.cursor()
+    create_database()
+    create_table()
+    while True:
+        print("\n--Menu de gerenciamento CRUD--")
+        print("[c] Criar novo produto")
+        print("[r] Consultar produto")
+        print("[u] Atualizar Produto produto")
+        print("[d] Deletar produto")
+        print("[s] Sair")
+        opc = input("Escolha uma das opções acima: ").lower()
+
+        if opc == "c":
+            insert()
+        elif opc == "r":
+          select_all()
+        elif opc == "u":
+            update()
+        elif opc == "d":
+            delete()
+        elif opc == "s":
+            print("End of Stream...")
+            break
+        else:
+            Print("Opção inválida, tente novamente.")
+        close_connection()
+        show_records()
